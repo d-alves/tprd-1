@@ -2,12 +2,12 @@
 from socket import *
 from mensagem import Mensagem
 
-def Main(fileName):
+def Main(fileName, perror):
 	file = abreArquivo(fileName)
 	linhas = criaListaLinhas(file)
 	mensagens = []
 	for linha in linhas:
-		mensagens.append(Mensagem(linhas.index(linha), linha))
+		mensagens.append(Mensagem(linhas.index(linha), linha, perror))
 	for mensagem in mensagens:
 		print str(mensagem.tamanhoMensagem) + ' ' + str(mensagem.sec) + ' ' + str(mensagem.nsec) + ' ' + mensagem.codVerificacao
 
@@ -31,7 +31,9 @@ if __name__ == "__main__":
 	# client_socket = socket(AF_INET, SOCK_DGRAM)
 
 	nome = raw_input("Enter a name: ")
-	Main(nome)
+	perror = 0.5
+
+	Main(nome, perror)
 	
 	# msg = raw_input("Input lowercase sentence: ")
 	

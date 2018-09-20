@@ -14,13 +14,13 @@ class Mensagem:
 		self.nsec = self.defineNsec()
 		self.codVerificacao = self.geraMD5Mensagem(perror)
 
-	def __init__(self, seqNum, textoMensagem):
-		self.seqNum = seqNum
-		self.textoMensagem = textoMensagem
-		self.tamanhoMensagem = self.defineTamanhoMsg()
-		self.tick = self.defineTimestamp()
-		self.sec = self.defineSec()
-		self.nsec = self.defineNsec()
+	# def __init__(self, seqNum, textoMensagem):
+	# 	self.seqNum = seqNum
+	# 	self.textoMensagem = textoMensagem
+	# 	self.tamanhoMensagem = self.defineTamanhoMsg()
+	# 	self.tick = self.defineTimestamp()
+	# 	self.sec = self.defineSec()
+	# 	self.nsec = self.defineNsec() 
 
 	def defineTamanhoMsg(self):
 		return len(self.textoMensagem)
@@ -35,7 +35,8 @@ class Mensagem:
 		return self.tick - int(self.tick)
 
 	def geraMD5Mensagem(self, perror):
-		numRandom = geraNumeroAleatorio()
+		numRandom = random.uniform(0, 1)
+		print numRandom
 
 		if(numRandom < perror):
 			concatCampos = str(self.seqNum) + str(self.sec) + str(self.nsec) + str(-1) + self.textoMensagem
@@ -44,11 +45,6 @@ class Mensagem:
 		
 		return hashlib.md5(concatCampos.encode('utf-8')).hexdigest()[:16]
 
-	def geraNumeroAleatorio(self):
-		return random.uniform(0, 1)
-
 	def packMensagemParaMD5(self):
 		formato = '!2QIH' + str(tamanhoMensagem) + 's' + str(len(self.codVerificacao)) + 's'
 		return struct.pack(formato, self.seqNum, self.sec, self.nseq, self.tamanhoMensagem, self.textoMensagem, self.codVerificacao)
-
-	def verificaMD5(self)
