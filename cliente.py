@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from socket import *
 from mensagem import Mensagem
+import time
 
 # class RingBuffer:
 # 	def __init__(self, size):
@@ -40,39 +41,58 @@ class Envio:
 		 self.ultimoAck = -1
 
 	def enviaMensagem(self, mensagem):
-		# socket.sendto(mensagem) 
-		# time.sleep(1.5)
+		socket.sendto(mensagem, ()) 
+		time.sleep(1.5)
 
-	def insereMensagemJanela(self, mensagem):
-		# to do - inserção na janela - verificar
-		self.mensagemAtual++
-		self.espacosLivres--
-		self.ultimoEnviado++
-		self.enviaMensagem(mensagem)
+	# def insereMensagemJanelaAntigo(self, mensagem):
+	# 	# to do - inserção na janela - verificar
+	# 	self.mensagemAtual++
+	# 	self.espacosLivres--
+	# 	self.ultimoEnviado++
+	# 	self.enviaMensagem(mensagem)
 
 	def verificaAcks(self):
+		entrada, saida, excecao = select.select(client_socket, [], [], TIMEOUT)
+		if entrada:
+			resposta, endereco = self.client_socket.recvfrom(1024)
 		# resposta = conn.recv(1024)
 
-	def enviaMensagens(mensagens, tamanhoJanela):
-		idMensagem = 0
-		while(idMensagem < len(mensagens) or ultimoAck < (len(mensagens) - 1)):
-			while self.temEspaco and idMensagem != len(mensagens):
-				mensagem = mensagens[idMensagem].packMensagemParaMD5()
-				idMensagem++
-				self.insereMensagemJanela(mensagem)
+	# def enviaMensagens(mensagens, tamanhoJanela):
+	# 	idMensagem = 0
+	# 	while(idMensagem < len(mensagens) or ultimoAck < (len(mensagens) - 1)):
+	# 		while self.temEspaco and idMensagem != len(mensagens):
+	# 			mensagem = mensagens[idMensagem].packMensagemParaMD5()
+	# 			idMensagem++
+	# 			self.insereMensagemJanelaAntigo(mensagem)
 
 			# to do - aguardar retorno do servidor (função verificaAcks()), se não receber, reenvia
 			# to do - se não houver erro, desloca janela
 
-def Main(fileName, perror):
+	def insereMensagemJanela(self, mensagem):
+		self.janelaDeslizante.append(mensagem)
+
+	def enviaMensagens(mensagens, tamanhoJanela):
+		idMensagem = 0
+		while(idMensagem < len(mensagens) or ultimoAck < (len(mensagens) - 1)):
+			while(self.espacosLivres > 0 and idMensagem != len(mensagens)):
+				mensagem = mensagens[idMensagem].packMensagemParaMD5()
+				insereMensagemJanela(mensagem)
+
+				self.mensagemAtual = idMensagem
+				self.espacosLivres--
+				idMensagem++
+
+
+
+
+def Main(servidor, porta, fileName, perror, socket):
 	file = abreArquivo(fileName)
 	linhas = criaListaLinhas(file)
 	mensagens = []
 	for linha in linhas:
 		mensagens.append(Mensagem(linhas.index(linha), linha, perror))
-	for mensagem in mensagens:
-		print str(mensagem.tamanhoMensagem) + ' ' + str(mensagem.sec) + ' ' + str(mensagem.nsec) + ' ' + mensagem.codVerificacao
 
+	
 def abreArquivo(fileName):
 	file = open(fileName, "r")
 	return file
@@ -90,12 +110,12 @@ if __name__ == "__main__":
         # DGRAM ~ UDP
 	server_name = "localhost"
 	server_port = 12000
-	socket = socket(AF_INET, SOCK_DGRAM)
+	client_socket = socket(AF_INET, SOCK_DGRAM)
 
-	nome = raw_input("Enter a name: ")
+	nome_arquivo = raw_input("Enter a name: ")
 	perror = 0.5
 
-	Main(nome, perror)
+	Main(server_name, server_port, nome_arquivo, perror, client_socket)
 	
 	# msg = raw_input("Input lowercase sentence: ")
 	
