@@ -1,48 +1,13 @@
 # -*- coding: utf-8 -*-
 from socket import *
+from threading import Thread
+from threading import Condition
 from mensagem import Mensagem
+from ringbuffer import RingBuffer
+from envio import Envio
+from envio import PreparacaoBuffer
 import time
 
-# class RingBuffer:
-# 	def __init__(self, size):
-# 		self.data = [None for i in xrange(size)]
-
-# 	def adicionaItem(self, x):
-# 		self.data.pop(0)
-# 		self.data.append(x)
-
-# 	def removeItem(self, posicao):
-# 		self.data.pop(posicao)
-# 		self.data.insert(posicao, None)
-
-# 	def limpaBuffer(self):
-# 		self.data.pop(0)
-# 		self.data.insert(0, None)
-
-# 	def bufferVazio(self):
-# 		return self.data[0] == ""
-
-# 	def bufferPossuiEspacoLivre(self):
-# 		return 
-
-# 	def get(self):
-# 		return self.data
-
-class Envio:
-	def __init__(self, tamanhoJanela, timeout, numMensagens):
-		 self.tamanhoJanela = tamanhoJanela
-		 self.timeout = timeout
-		 self.numMensagens = numMensagens
-		 self.socketEnvio = socket.socket()
-		 self.mensagemAtual = 0
-		 self.espacosLivres = tamanhoJanela
-		 self.janelaDeslizante = tamanhoJanela * [None]
-		 self.ultimoEnviado = -1
-		 self.ultimoAck = -1
-
-	def enviaMensagem(self, mensagem):
-		socket.sendto(mensagem, ()) 
-		time.sleep(1.5)
 
 	# def insereMensagemJanelaAntigo(self, mensagem):
 	# 	# to do - inserção na janela - verificar
@@ -51,10 +16,10 @@ class Envio:
 	# 	self.ultimoEnviado++
 	# 	self.enviaMensagem(mensagem)
 
-	def verificaAcks(self):
-		entrada, saida, excecao = select.select(client_socket, [], [], TIMEOUT)
-		if entrada:
-			resposta, endereco = self.client_socket.recvfrom(1024)
+	# def verificaAcks(self):
+	# 	entrada, saida, excecao = select.select(client_socket, [], [], TIMEOUT)
+	# 	if entrada:
+	# 		resposta, endereco = self.client_socket.recvfrom(1024)
 		# resposta = conn.recv(1024)
 
 	# def enviaMensagens(mensagens, tamanhoJanela):
@@ -68,22 +33,19 @@ class Envio:
 			# to do - aguardar retorno do servidor (função verificaAcks()), se não receber, reenvia
 			# to do - se não houver erro, desloca janela
 
-	def insereMensagemJanela(self, mensagem):
-		self.janelaDeslizante.append(mensagem)
+	# def insereMensagemJanela(self, mensagem):
+	# 	self.janelaDeslizante.append(mensagem)
 
-	def enviaMensagens(mensagens, tamanhoJanela):
-		idMensagem = 0
-		while(idMensagem < len(mensagens) or ultimoAck < (len(mensagens) - 1)):
-			while(self.espacosLivres > 0 and idMensagem != len(mensagens)):
-				mensagem = mensagens[idMensagem].packMensagemParaMD5()
-				insereMensagemJanela(mensagem)
+	# def enviaMensagens(mensagens, tamanhoJanela):
+	# 	idMensagem = 0
+	# 	while(idMensagem < len(mensagens) or ultimoAck < (len(mensagens) - 1)):
+	# 		while(self.espacosLivres > 0 and idMensagem != len(mensagens)):
+	# 			mensagem = mensagens[idMensagem].packMensagemParaMD5()
+	# 			insereMensagemJanela(mensagem)
 
-				self.mensagemAtual = idMensagem
-				self.espacosLivres--
-				idMensagem++
-
-
-
+	# 			self.mensagemAtual = idMensagem
+	# 			self.espacosLivres--
+	# 			idMensagem++
 
 def Main(servidor, porta, fileName, perror, socket):
 	file = abreArquivo(fileName)
